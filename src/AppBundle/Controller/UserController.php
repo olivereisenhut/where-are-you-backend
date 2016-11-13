@@ -28,6 +28,8 @@ class UserController extends FOSRestController
         return $this->view($users, Response::HTTP_OK);
     }
 
+    //TODO Implement google api client => https://github.com/google/google-api-php-client
+    //TODO validate token with api client and save the state from api client call
     /**
      * Creates a new user entity.
      *
