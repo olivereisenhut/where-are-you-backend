@@ -41,8 +41,8 @@ class UserController extends FOSRestController
         $data = json_decode($request->getContent(), true);
 
         $prename = $data['Prename'];
-        $name = $data['Prename'];
-        $mail = $data['Prename'];
+        $name = $data['Name'];
+        $mail = $data['Mail'];
         $user = new User();
 
         $user->setName($name);
