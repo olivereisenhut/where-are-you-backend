@@ -43,11 +43,15 @@ class UserController extends FOSRestController
         $prename = $data['Prename'];
         $name = $data['Name'];
         $mail = $data['Mail'];
+        $google_id_token = $data['TokenId'];
+        $image_url = $data['ImageUrl'];
         $user = new User();
 
         $user->setName($name);
         $user->setPrename($prename);
         $user->setEmail($mail);
+        $user->setGoogleIdToken($google_id_token);
+        $user->setImageUrl($image_url);
         $user->setFriends(array());
 
 

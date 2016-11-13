@@ -50,6 +50,20 @@ class User
     private $friends;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    //private $google_id_token;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    //private $image_url;
+
+    /**
      * Get id
      *
      * @return int
@@ -153,5 +167,53 @@ class User
     public function getFriends()
     {
         return $this->friends;
+    }
+
+    /**
+     * Set google_id_token
+     *
+     * @param string
+     *
+     * @return User
+     */
+    public function setGoogleIdToken($google_id_token)
+    {
+        $this->google_id_token = $google_id_token;
+
+        return $this;
+    }
+
+    /**
+     * Get google_id_token
+     *
+     * @return string
+     */
+    public function getGoogleIdToken()
+    {
+        return $this->google_id_token;
+    }
+
+    /**
+     * Set image_url
+     *
+     * @param string
+     *
+     * @return User
+     */
+    public function setImageUrl($image_url)
+    {
+        $this->image_url = $image_url;
+
+        return $this;
+    }
+
+    /**
+     * Get image_url
+     *
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        return $this->image_url;
     }
 }
