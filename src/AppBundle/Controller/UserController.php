@@ -60,7 +60,12 @@ class UserController extends FOSRestController
         if ($mail) {
             $existing_user = $em->getRepository('AppBundle:User')->findBy(array('email' => $mail));
             if ($existing_user) {
-                $user = $existing_user;
+                if ($existing_user->getGoogleIdToken() == $this->isValideGoogleToken($existing_user->getGoogleIdToken())) {
+                    $user = $existing_user;
+                }
+                else {
+                    throw new HttpException(400, "Given token is not valid");
+                }
             }
         }
         else {
@@ -94,6 +99,23 @@ class UserController extends FOSRestController
         $em->flush($user);
 
         return $this->view($user,Response::HTTP_OK);
+    }
+
+    private  function isValideGoogleToken($token_id) {
+        $client = new \Google_Client();
+        $client->setApplicationName("Where_Are_You_API");
+        $client->setDeveloperKey("135317923400-spd82dqbrhcbq5k6nvskhdodgtb34ana.apps.googleusercontent.com");
+        $is_valid = $client->verifyIdToken($token_id);
+
+        if ($is_valid) {
+            $client->setaccesstoken($token_id);
+            $is_expired = $client->isAccessTokenExpired();
+            if ($is_expired) {
+                //TODO revalidate login
+            }
+        }
+
+        return $is_valid ? true : false;
     }
 
 }
