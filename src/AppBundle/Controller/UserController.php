@@ -68,13 +68,8 @@ class UserController extends FOSRestController
             }
 
             else {
-                try {
                     $em->persist($user);
                     $em->flush($user);
-                } catch (Exception $exception) {
-                    $user = $exception;
-                }
-
             }
         }
 
