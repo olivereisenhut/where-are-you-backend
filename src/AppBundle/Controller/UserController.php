@@ -58,12 +58,7 @@ class UserController extends FOSRestController
         if ($mail) {
             $existing_user = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $mail));
             if ($existing_user) {
-                if ($existing_user->getGoogleIdToken() == $this->isValidGoogleToken($existing_user->getGoogleIdToken())) {
                     $user = $existing_user;
-                }
-                else {
-                    throw new HttpException(400, "Given token is not valid");
-                }
             }
 
             else {
