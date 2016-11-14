@@ -54,14 +54,14 @@ class User
      *
      * @ORM\Column(type="string")
      */
-    //private $google_id_token;
+    private $google_id_token;
 
     /**
      * @var string
      *
      * @ORM\Column(type="string")
      */
-    //private $image_url;
+    private $image_url;
 
     /**
      * Get id
@@ -146,6 +146,31 @@ class User
     }
 
     /**
+     * add friend
+     *
+     * @param User $user
+     *
+     * @return array
+     */
+    public function addFriend(User $user) {
+        $this->friends[] = $user;
+        return $this->friends;
+    }
+
+    /**
+     * add friend
+     *
+     * @param User $user
+     *
+     * @return array
+     */
+    public function removeFriend(User $user) {
+        $user_index = array_search($user, $this->friends);
+        unset($this->friends[$user_index]);
+        return $this->friends;
+    }
+
+    /**
      * Set friends
      *
      * @param string $friends
@@ -156,7 +181,7 @@ class User
     {
         $this->friends = $friends;
 
-        return $this;
+        return $this->friends;
     }
 
     /**

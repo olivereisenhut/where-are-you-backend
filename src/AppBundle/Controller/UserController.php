@@ -28,8 +28,6 @@ class UserController extends FOSRestController
         return $this->view($users, Response::HTTP_OK);
     }
 
-    //TODO Implement google api client => https://github.com/google/google-api-php-client
-    //TODO validate token with api client and save the state from api client call
     /**
      * Creates a new user entity.
      *
@@ -58,20 +56,22 @@ class UserController extends FOSRestController
         $em = $this->getDoctrine()->getManager();
 
         if ($mail) {
-            $existing_user = $em->getRepository('AppBundle:User')->findBy(array('email' => $mail));
+            $existing_user = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $mail));
             if ($existing_user) {
-                if ($existing_user->getGoogleIdToken() == $this->isValideGoogleToken($existing_user->getGoogleIdToken())) {
+                if ($existing_user->getGoogleIdToken() == $this->isValidGoogleToken($existing_user->getGoogleIdToken())) {
                     $user = $existing_user;
                 }
                 else {
                     throw new HttpException(400, "Given token is not valid");
                 }
             }
+
+            else {
+                $em->persist($user);
+                $em->flush($user);
+            }
         }
-        else {
-            $em->persist($user);
-            $em->flush($user);
-        }
+
 
         return $this->view($user,Response::HTTP_OK);
     }
@@ -101,7 +101,63 @@ class UserController extends FOSRestController
         return $this->view($user,Response::HTTP_OK);
     }
 
-    private  function isValideGoogleToken($token_id) {
+    /**
+     * Finds friends of a user
+     *
+     * @Rest\Get("friends/{id}", name="show_friends")
+     *
+     */
+    public function getFriends(User $user)
+    {
+        $friends = $user->getFriends();
+        return $this->view($friends,Response::HTTP_OK);
+    }
+
+    /**
+     * Remove friend of a user
+     *
+     * @Rest\Delete("friends/{id}/{friend}", name="delete_friend")
+     *
+     */
+    public function deleteFriend(User $user, User $friend)
+    {
+        $user->removeFriend($friend);
+    }
+
+    /**
+     * Add friend to a user
+     *
+     * @Rest\Post("friends/{id}", name="add_friends")
+     *
+     */
+    public function newFriend(Request $request, User $user)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $prename = $data['Prename'];
+        $name = $data['Name'];
+        $mail = $data['Mail'];
+        $google_id_token = $data['TokenId'];
+        $image_url = $data['ImageUrl'];
+        $new_friend = new User();
+
+        $new_friend->setName($name);
+        $new_friend->setPrename($prename);
+        $new_friend->setEmail($mail);
+        $new_friend->setGoogleIdToken($google_id_token);
+        $new_friend->setImageUrl($image_url);
+        $new_friend->setFriends(array());
+
+        $user->addFriend($new_friend);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush($user);
+
+        return $this->view($user, Response::HTTP_OK);
+    }
+
+    private  function isValidGoogleToken($token_id) {
         $client = new \Google_Client();
         $client->setApplicationName("Where_Are_You_API");
         $client->setDeveloperKey("135317923400-spd82dqbrhcbq5k6nvskhdodgtb34ana.apps.googleusercontent.com");
@@ -117,5 +173,6 @@ class UserController extends FOSRestController
 
         return $is_valid ? true : false;
     }
+
 
 }
