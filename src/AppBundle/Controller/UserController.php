@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\User;
@@ -62,8 +63,13 @@ class UserController extends FOSRestController
             }
 
             else {
-                $em->persist($user);
-                $em->flush($user);
+                try {
+                    $em->persist($user);
+                    $em->flush($user);
+                } catch (Exception $exception) {
+                    $user = $exception;
+                }
+
             }
         }
 
