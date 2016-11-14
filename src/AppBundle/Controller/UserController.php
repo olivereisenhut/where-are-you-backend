@@ -127,28 +127,12 @@ class UserController extends FOSRestController
     /**
      * Add friend to a user
      *
-     * @Rest\Post("friends/{id}", name="add_friends")
+     * @Rest\Post("friends/{id}/{friend}", name="add_friends")
      *
      */
-    public function newFriend(Request $request, User $user)
+    public function newFriend(User $user, User $friend)
     {
-        $data = json_decode($request->getContent(), true);
-
-        $prename = $data['Prename'];
-        $name = $data['Name'];
-        $mail = $data['Mail'];
-        $google_id_token = $data['TokenId'];
-        $image_url = $data['ImageUrl'];
-        $new_friend = new User();
-
-        $new_friend->setName($name);
-        $new_friend->setPrename($prename);
-        $new_friend->setEmail($mail);
-        $new_friend->setGoogleIdToken($google_id_token);
-        $new_friend->setImageUrl($image_url);
-        $new_friend->setFriends(array());
-
-        $user->addFriend($new_friend);
+        $user->addFriend($friend);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
