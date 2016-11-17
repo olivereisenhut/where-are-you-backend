@@ -20,8 +20,10 @@ class CoordinateController extends FOSRestController
      *
      * @Rest\Get("coordinate/{id}", name="coordinate_index")
      */
-    public function showAction(Coordinate $coordinate)
+    public function showAction(User $user)
     {
+        $em = $this->getDoctrine()->getManager();
+        $coordinate = $em->getRepository('AppBundle:Coordinate')->findOneBy(array('user_id' => $user->getId()));
         return $this->view($coordinate, Response::HTTP_OK);
     }
 
