@@ -52,7 +52,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
     private $google_id_token;
 
