@@ -111,7 +111,7 @@ class UserController extends FOSRestController
     public function getFriends(User $user)
     {
         $friends = $user->getFriends();
-        return $this->view($friends,Response::HTTP_OK);
+        return $this->view($friends, Response::HTTP_OK);
     }
 
     /**
@@ -123,6 +123,7 @@ class UserController extends FOSRestController
     public function deleteFriend(User $user, User $friend)
     {
         $user->removeFriend($friend);
+        return $this->view($user, Response::HTTP_OK);
     }
 
     /**
