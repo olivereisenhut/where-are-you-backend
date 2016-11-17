@@ -159,7 +159,7 @@ class UserController extends FOSRestController
             }
         }
 
-        return $is_valid ? true : false;
+        return $is_valid;
     }
 
     public function validateModel($data) {
