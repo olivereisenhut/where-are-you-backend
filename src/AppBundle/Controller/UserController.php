@@ -120,7 +120,11 @@ class UserController extends FOSRestController
      */
     public function getFriends(User $user)
     {
-        $friends = $user->getFriends();
+        $friend_ids = $user->getFriends();
+        $em = $this->getDoctrine()->getManager();
+
+        $friends = $em->getRepository('AppBundle:User')->findBy(array('id' => $friend_ids));
+
         return $this->view($friends, Response::HTTP_OK);
     }
 
@@ -132,7 +136,12 @@ class UserController extends FOSRestController
      */
     public function deleteFriend(User $user, User $friend)
     {
-        $user->removeFriend($friend);
+        if ($user->friendExists($friend->getId())) {
+            $user->removeFriend($friend->getId());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush($user);
+        }
         return $this->view($user, Response::HTTP_OK);
     }
 
@@ -144,11 +153,12 @@ class UserController extends FOSRestController
      */
     public function newFriend(User $user, User $friend)
     {
-        $user->addFriend($friend);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush($user);
+        if (!$user->friendExists($friend->getId())) {
+            $user->addFriend($friend->getId());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush($user);
+        }
 
         return $this->view($user, Response::HTTP_OK);
     }

@@ -145,27 +145,31 @@ class User
         return $this->email;
     }
 
+    public function friendExists($friend_id) {
+        return in_array($friend_id, $this->getFriends());
+    }
+
     /**
      * add friend
      *
-     * @param User $user
+     * @param string $user
      *
      * @return array
      */
-    public function addFriend(User $user) {
-        $this->friends[] = $user;
+    public function addFriend($user_id) {
+        $this->friends[] = $user_id;
         return $this->friends;
     }
 
     /**
      * add friend
      *
-     * @param User $user
+     * @param string $user_id
      *
      * @return array
      */
-    public function removeFriend(User $user) {
-        $user_index = array_search($user, $this->friends);
+    public function removeFriend($user_id) {
+        $user_index = array_search($user_id, $this->friends);
         unset($this->friends[$user_index]);
         return $this->friends;
     }
