@@ -61,12 +61,20 @@ class UserController extends FOSRestController
         if ($mail) {
             $existing_user = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $mail));
             if ($existing_user) {
-                //if ($existing_user->getGoogleIdToken() == $this->isValidGoogleToken($existing_user->getGoogleIdToken())) {
+                if ($existing_user->getGoogleIdToken() != $google_id_token) {
+                   $existing_user->setGoogleIdToken($google_id_token);
+                    $em->persist($existing_user);
+                    $em->flush($user);
+                }
+
+                if ($this->isValidGoogleToken($existing_user->getGoogleIdToken())) {
                     $user = $existing_user;
-                //}
-                //else {
-                //    throw new HttpException(400, "Given token is not valid");
-                //}
+                }
+
+                else {
+                    throw new HttpException(400, "Given token is not valid");
+                }
+
             }
 
             else {
@@ -147,22 +155,17 @@ class UserController extends FOSRestController
 
     private  function isValidGoogleToken($token_id) {
         $client = new \Google_Client();
-        $client->setApplicationName("Where_Are_You_API");
+        $client->setApplicationName("WhereAreYou");
         $client->setDeveloperKey("135317923400-spd82dqbrhcbq5k6nvskhdodgtb34ana.apps.googleusercontent.com");
+        $client->setClientSecret('dMl4EsItwxf5BRiz-diaeAJl');
         $is_valid = $client->verifyIdToken($token_id);
 
-        if ($is_valid) {
-            $client->setaccesstoken($token_id);
-            $is_expired = $client->isAccessTokenExpired();
-            if ($is_expired) {
-                //TODO revalidate login
-            }
-        }
 
         return $is_valid;
+
     }
 
-    public function validateModel($data) {
+    private function validateModel($data) {
         $expected_data_member = array('Prename', 'Name', 'Mail', 'TokenId', 'ImageUrl');
 
         foreach ($expected_data_member as $data_member) {
