@@ -39,6 +39,8 @@ class UserController extends FOSRestController
 
         $data = json_decode($request->getContent(), true);
 
+        $this->validateModel($data);
+
         $prename = $data['Prename'];
         $name = $data['Name'];
         $mail = $data['Mail'];
@@ -158,6 +160,18 @@ class UserController extends FOSRestController
         }
 
         return $is_valid ? true : false;
+    }
+
+    public function validateModel($data) {
+        $expected_data_member = array('Prename', 'Name', 'Mail', 'TokenId', 'ImageUrl');
+
+        foreach ($expected_data_member as $data_member) {
+            if ($data[$data_member] == '') {
+                throw new HttpException(400, "Bad data");
+            }
+        }
+
+        return true;
     }
 
 
