@@ -46,6 +46,12 @@ class CoordinateController extends FOSRestController
             $coordinate->setLatitude($lat);
 
             $em = $this->getDoctrine()->getManager();
+            $existing_coordinate = $em->getRepository('AppBundle:Coordinate')->findOneBy(array('user_id' => $user->getId()));
+
+            if ($existing_coordinate) {
+                $coordinate = $existing_coordinate;
+            }
+
             $em->persist($coordinate);
             $em->flush($coordinate);
         } else {
