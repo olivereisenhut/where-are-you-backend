@@ -63,7 +63,7 @@ class UserController extends FOSRestController
             if ($existing_user) {
                 if ($existing_user->getGoogleIdToken() != $google_id_token) {
                    $existing_user->setGoogleIdToken($google_id_token);
-                    $em->persist($existing_user);
+                    $em->persist($user);
                     $em->flush($user);
                 }
 
