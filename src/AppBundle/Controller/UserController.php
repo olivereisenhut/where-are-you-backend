@@ -118,6 +118,30 @@ class UserController extends FOSRestController
     }
 
     /**
+     * Finds available friends for a user
+     *
+     * @Rest\Get("friends/available/{id}", name="show_available_friends")
+     *
+     */
+    public function getAvailableFriends(User $user)
+    {
+
+        $user_ids = $user->getFriends();
+
+        $user_repo = $this->getDoctrine()
+            ->getRepository('AppBundle:User');
+
+        $query = $user_repo->createQueryBuilder('f')
+            ->where('f.id != :user_ids')
+            ->andWhere('f.id != :user_id')
+            ->setParameters(array('user_ids' => $user_ids, 'user_id' => $user->getId()))
+            ->getQuery();
+        $available_users = $query->getResult();
+
+        return $this->view($available_users, Response::HTTP_OK);
+    }
+
+    /**
      * Finds friends of a user
      *
      * @Rest\Get("friends/{id}", name="show_friends")
