@@ -59,8 +59,13 @@ class UserController extends FOSRestController
         $em = $this->getDoctrine()->getManager();
 
         if ($mail) {
+            //check if there's already a user
             $existing_user = $em->getRepository('AppBundle:User')->findOneBy(array('email' => $mail));
             if ($existing_user) {
+                //check if google token was updated if so check
+                //check if the new one is valid
+                //if yes return that user with new token
+                //else throw http exeption
                 if ($existing_user->getGoogleIdToken() != $google_id_token) {
                    $existing_user->setGoogleIdToken($google_id_token);
                     $em->persist($user);
@@ -76,7 +81,7 @@ class UserController extends FOSRestController
                 }
 
             }
-
+            //save new user to database if it's not already existent
             else {
                     $em->persist($user);
                     $em->flush($user);
@@ -122,7 +127,7 @@ class UserController extends FOSRestController
     {
         $friend_ids = $user->getFriends();
         $em = $this->getDoctrine()->getManager();
-
+        //get all users which for the defined friend_ids
         $friends = $em->getRepository('AppBundle:User')->findBy(array('id' => $friend_ids));
 
         return $this->view($friends, Response::HTTP_OK);
@@ -170,9 +175,7 @@ class UserController extends FOSRestController
         $client->setClientSecret('dMl4EsItwxf5BRiz-diaeAJl');
         $is_valid = $client->verifyIdToken($token_id);
 
-
         return $is_valid;
-
     }
 
     private function validateModel($data) {
@@ -183,7 +186,6 @@ class UserController extends FOSRestController
                 throw new HttpException(400, "Bad data");
             }
         }
-
         return true;
     }
 
