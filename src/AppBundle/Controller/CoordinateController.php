@@ -51,6 +51,8 @@ class CoordinateController extends FOSRestController
 
             if ($existing_coordinate) {
                 $coordinate = $existing_coordinate;
+                $coordinate->setLongitude($long);
+                $coordinate->setLatiude($lat);
             }
 
             $em->persist($coordinate);
